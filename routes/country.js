@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
-const getDataFromWeb = require('../utils/update');
+const {getDataFromWeb} = require('../utils/update');
 const {buildData} = require('../utils/update');
 
 // const Country = mongoose.model('Country');
 
-// const getData = async () =>
-//     await getDataFromWeb('casualties');
-
 const getData = async () =>
-    await buildData(['casualties', 'infected', 'recovered']);
+    await getDataFromWeb('casualties');
+
+// const getData = async () =>
+//     await buildData(['casualties', 'infected', 'recovered']);
 
 
 
