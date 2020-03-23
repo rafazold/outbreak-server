@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 mongoose.model('Country', {
-    Date: {
+    date: {
         type: Date,
         default: Date.now
     },

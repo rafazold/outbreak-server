@@ -2,8 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
-const getDataFromWeb = require('./utils/update');
 const {port} = require('./config');
+require("./models");
+
 const app = express();
 
 
@@ -21,11 +22,6 @@ app.use(bodyParser.json());
 
 
 
-const confirmedArr = async () =>
-    await getDataFromWeb('TimelineConfirmed');
-
-
-
 require('./routes/country')(app);
 
 app.use(function (err, req, res, next) {
@@ -33,13 +29,3 @@ app.use(function (err, req, res, next) {
     res.status(500).send('Something broke!') })
 
 app.listen(port, () => console.log(`App listening on port ${port}!`));
-
-// console.log('aaaaa',confirmedArr, 'YOOOOOO');
-
-// async function confirmedArr() {
-//     const arr = await dataFromWeb('TimelineConfirmed');
-//     console.log('arr', arr)
-//     return arr
-// }
-
-// confirmedArr().then((x) => console.log('finished', x))
