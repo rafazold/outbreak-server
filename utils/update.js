@@ -1,11 +1,12 @@
 const csv = require('csvtojson');
 const request=require('request');
-const dateRange = require('./dateRange');
+const datesRange = require('./dateRange');
 const mongoose = require('mongoose');
+const Country = mongoose.model('Country');
 //TODO: add models/index then instead of req.body can add the actual object.
 
 
-const getDataFromWeb = (dataType, statObj) => {
+const getDataFromWeb = (dataType, statObj, datesRange) => {
     // const today = Date.now();
     // const dates = dateRange(today, -90);
     // console.log(dates)
@@ -13,46 +14,56 @@ const getDataFromWeb = (dataType, statObj) => {
     const url = () => {
         switch(dataType) {
             case 'Infected':
-                return 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv';
+                return 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
             case 'Casualties':
-                return 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv';
+                return 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv';
             case 'Recovered':
                 return 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv';
         }
     };
-    const makeItemObject = (result, statObj) => {
+    const makeItemObject = (result, statObj, ) => {
+        const datesObj = {};
+
         for (let [key, value] of Object.entries(result)) {
-            if (
-                key !== 'Province/State' &&
-                key !== 'Country/Region' &&
-                key !== 'Lat' &&
-                key !== 'Long'
-            ) {
+            if (!datesObj[key]) {
+                if (
+                    key !== 'Province/State' &&
+                    key !== 'Country/Region' &&
+                    key !== 'Lat' &&
+                    key !== 'Long' &&
+                    key !== datesRange[key]
 
-                if (!statObj[key]) {
-                    statObj[key] = {};
+                ) {
+                    // console.log('key: ', key, 'range: ', datesRange[key], 'eval: ', key!==datesRange[key] )
+
+                    if (!statObj[key]) {
+                        statObj[key] = {};
+                    }
+
+                    statObj[key]['date'] = new Date(key);
+
+                    if (!statObj[key]['country']){
+                        statObj[key]['country'] = {};
+                    }
+                    if (!statObj[key]['country'][result['Country/Region']]) {
+                        statObj[key]['country'][result['Country/Region']] = {}
+                    }
+
+                    if (!statObj[key][`total${dataType}`]) {
+                        statObj[key][`total${dataType}`] = 0;
+                    }
+
+                    statObj[key]['country'][result['Country/Region']]['name'] = result['Country/Region'];
+                    statObj[key]['country'][result['Country/Region']][`${dataType}`] = parseInt(value);
+
+
+                    statObj[key][`total${dataType}`] += parseInt(value);
                 }
 
-                statObj[key]['date'] = new Date(key);
-
-                if (!statObj[key]['country']){
-                    statObj[key]['country'] = {};
-                }
-                if (!statObj[key]['country'][result['Country/Region']]) {
-                    statObj[key]['country'][result['Country/Region']] = {}
-                }
-
-                if (!statObj[key][`total${dataType}`]) {
-                    statObj[key][`total${dataType}`] = 0;
-                }
-
-                statObj[key]['country'][result['Country/Region']]['name'] = result['Country/Region'];
-                statObj[key]['country'][result['Country/Region']][`${dataType}`] = parseInt(value);
-
-
-                statObj[key][`total${dataType}`] += parseInt(value);
             }
+
         }
+
     }
 
     return csv({
@@ -66,16 +77,16 @@ const getDataFromWeb = (dataType, statObj) => {
         .then(() => statObj );
 };
 
-const buildDataObj  = () => {
+const buildDataObj  = (datesRange) => {
     let statsObj = {};
 
-    return getDataFromWeb('Infected', statsObj)
-        .then(() => getDataFromWeb('Casualties', statsObj))
-            .then(() => getDataFromWeb('Recovered', statsObj))
+    return getDataFromWeb('Infected', statsObj, datesRange)
+        .then(() => getDataFromWeb('Casualties', statsObj, datesRange))
+            .then(() => getDataFromWeb('Recovered', statsObj, datesRange))
 }
 
-const formatForDb = () => {
-    const allDays = buildDataObj()
+const formatForDb = (datesRange) => {
+    const allDays = buildDataObj(datesRange)
         .then((obj) => Object.values(obj))
         .then(arr => arr.map((country) => {
             country.country = Object.values(country.country)
