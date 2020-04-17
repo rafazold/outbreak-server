@@ -3,7 +3,6 @@ const request=require('request');
 const datesRange = require('./dateRange');
 const mongoose = require('mongoose');
 const Country = mongoose.model('Country');
-//TODO: add models/index then instead of req.body can add the actual object.
 
 
 const getDataFromWeb = (dataType, statObj, datesRange) => {
@@ -13,12 +12,12 @@ const getDataFromWeb = (dataType, statObj, datesRange) => {
 
     const url = () => {
         switch(dataType) {
-            case 'Infected':
+            case 'infected':
                 return 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
-            case 'Casualties':
+            case 'casualties':
                 return 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv';
-            case 'Recovered':
-                return 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv';
+            case 'recovered':
+                return 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv';
         }
     };
     const makeItemObject = (result, statObj, ) => {
@@ -34,7 +33,7 @@ const getDataFromWeb = (dataType, statObj, datesRange) => {
                     key !== datesRange[key]
 
                 ) {
-                    // console.log('key: ', key, 'range: ', datesRange[key], 'eval: ', key!==datesRange[key] )
+                    console.log('key: ', key, 'range: ', datesRange[key], 'eval: ', key!==datesRange[key] )
 
                     if (!statObj[key]) {
                         statObj[key] = {};
@@ -80,9 +79,9 @@ const getDataFromWeb = (dataType, statObj, datesRange) => {
 const buildDataObj  = (datesRange) => {
     let statsObj = {};
 
-    return getDataFromWeb('Infected', statsObj, datesRange)
-        .then(() => getDataFromWeb('Casualties', statsObj, datesRange))
-            .then(() => getDataFromWeb('Recovered', statsObj, datesRange))
+    return getDataFromWeb('infected', statsObj, datesRange)
+        .then(() => getDataFromWeb('casualties', statsObj, datesRange))
+            .then(() => getDataFromWeb('recovered', statsObj, datesRange))
 }
 
 const formatForDb = (datesRange) => {
@@ -96,13 +95,8 @@ const formatForDb = (datesRange) => {
     return allDays
 }
 
-const insertToDb = (arr) => {
-    return (formatForDb())
-}
-
 module.exports = {
     getDataFromWeb,
     buildDataObj,
     formatForDb,
-    insertToDb
 }

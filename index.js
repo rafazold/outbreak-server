@@ -23,6 +23,7 @@ app.use(bodyParser.json());
 
 
 require('./routes/country')(app);
+require('./routes/story')(app);
 
 app.use(function (err, req, res, next) {
     console.error(err)

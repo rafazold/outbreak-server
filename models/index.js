@@ -7,3 +7,4 @@ mongoose
     .catch(() => process.exit(1));
 
 require('./country');
+require('./story');
