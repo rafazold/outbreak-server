@@ -19,7 +19,7 @@ const storyRoutes = (app) => {
             Story
                 .find({})
                 .limit(1)
-                .sort({$natural:-1})
+                .sort({$natural:1})
                 .then(latestStory => res.json(latestStory[0].created).end())
                 .catch(() => res.status(400).end())
         })

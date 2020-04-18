@@ -35,7 +35,7 @@ const getStoriesFromWeb = async (req, res, next) => {
         fox-news,
         google-news,
         google-news-au,g
-        oogle-news-ca,
+        google-news-ca,
         google-news-in,
         google-news-uk,
         independent,
