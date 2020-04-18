@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 const Country = mongoose.model('Country');
 const {getDataFromWeb} = require('../utils/update');
 const datesRange = require('../utils/dateRange');
+const {getYesterdayData} = require("../utils/current");
 const {buildDataObj, formatForDb} = require('../utils/update');
+
 
 
 
@@ -34,6 +36,14 @@ function countryRoutes(app) {
                     ]
                 )
                 .then((x) => res.json(x).end())
+        })
+
+        .get('/api/countries/test', getYesterdayData, (req, res) => {
+            res.json(req.yesterdayData).end()
+        })
+
+        .get('/api/countries/update/current', getYesterdayData, (req, res) => {
+
         })
 }
 

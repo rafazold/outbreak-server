@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 const {mongoUri} = require('../config');
 
@@ -8,3 +7,4 @@ mongoose
 
 require('./country');
 require('./story');
+require('./current');

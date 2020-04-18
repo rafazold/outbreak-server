@@ -24,6 +24,7 @@ app.use(bodyParser.json());
 
 require('./routes/country')(app);
 require('./routes/story')(app);
+require('./routes/current')(app);
 
 app.use(function (err, req, res, next) {
     console.error(err)
