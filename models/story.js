@@ -18,5 +18,9 @@ mongoose.model('Story', {
     urlToImage: String,
     publishedAt: Date,
     content: String,
+    created: {
+        type: Date,
+        default: Date.now
+    }
 
 });

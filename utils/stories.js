@@ -54,6 +54,7 @@ const getStoriesFromWeb = async (req, res, next) => {
         usa-today
         `,
         pageSize: 100,
+        sortBy: 'relevancy'
     })
         .then(stories => {
             console.log('everything','stories');
