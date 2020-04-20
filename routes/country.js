@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Country = mongoose.model('Country');
 const {getDataFromWeb} = require('../utils/update');
-const datesRange = require('../utils/dateRange');
+const datesRangeInDb = require('../utils/dateRangeInDb');
 const {getYesterdayData} = require("../utils/current");
 const {buildDataObj, formatForDb} = require('../utils/update');
 
@@ -10,11 +10,11 @@ const {buildDataObj, formatForDb} = require('../utils/update');
 
 function countryRoutes(app) {
     app
-        .get('/api/update', datesRange, (req, res) => {
-            console.log(req.dates)
-            formatForDb(req.dates)
-                .then((x) => {
-                    res.json(x).end( )
+        .get('/api/update', datesRangeInDb, (req, res) => {
+            console.log(req.datesInDb)
+            formatForDb(req.datesInDb)
+                .then(updated => {
+                    res.json(updated).end()
                     // Country.collection.insertMany(x)
                     //     .then(inserted => res.json(inserted).end())
                     //     .catch(err => res.status(400).json({message: "can't update stats"}).end())
@@ -38,12 +38,8 @@ function countryRoutes(app) {
                 .then((x) => res.json(x).end())
         })
 
-        .get('/api/countries/test', getYesterdayData, (req, res) => {
+        .get('/api/countries/test', datesRangeInDb, (req, res) => {
             res.json(req.yesterdayData).end()
-        })
-
-        .get('/api/countries/update/current', getYesterdayData, (req, res) => {
-
         })
 }
 

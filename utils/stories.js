@@ -57,7 +57,7 @@ const getStoriesFromWeb = async (req, res, next) => {
         sortBy: 'relevancy'
     })
         .then(stories => {
-            console.log('everything','stories');
+            console.log('everything',stories);
             return stories
         })
         .catch(err => res.status(500).json({message: "server error"}).end() )
@@ -71,6 +71,7 @@ const addStoriesToDb = async (req, res, stories) => {
     const checkAndAddArticle = async (article) => {
         const addStory = Story.exists({ url: article.url })
             .then(articleExists => {
+                console.log(articleExists)
                 if (!articleExists) {
                     const story = new Story(article)
                     story.save()

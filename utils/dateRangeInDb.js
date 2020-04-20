@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-const Story = mongoose.model('Story');
+const Country = mongoose.model('Country');
 
 
-const getStoryUrls = async (req, res, next) => {
-    const urls= Story.distinct('url')
-        .then(urlsArr => {
+const datesRangeInDb = async (req, res, next) => {
+    const dates = Country.distinct('date')
+        .then(datesArr => {
             let datesObj = {};
             datesArr.forEach(date => {
                 const myDate = date.toLocaleString(
@@ -17,15 +17,9 @@ const getStoryUrls = async (req, res, next) => {
             return datesObj
         })
         .catch(err => res.status(500).json({message: "server error"}).end())
-    req.urls = await urls;
+    req.datesInDb = await dates;
 
     next()
 }
 
-module.exports = datesRange;
-
-
-// // request a weekday along with a long date
-// var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-// console.log(date.toLocaleString('en-US', options));
-// // → "Donnerstag, 20. Dezember 2012"
+module.exports = datesRangeInDb;

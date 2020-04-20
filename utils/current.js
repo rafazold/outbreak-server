@@ -7,4 +7,11 @@ const getYesterdayData = async (req, res, next) => {
     next()
 }
 
-module.exports = {getYesterdayData}
+const getCurrentCountries = async (req, res, next) => {
+    const currentData = api.yesterday.countries({sort:'cases'})
+    // .then()
+    req.countryData = await currentData;
+    next()
+}
+
+module.exports = {getYesterdayData, getCurrentCountries}

@@ -1,14 +1,16 @@
 const mongoose = require('mongoose');
 const Current = mongoose.model('Current');
-const {getYesterdayData} = require("../utils/current");
+const {getYesterdayData, getCurrentCountries} = require("../utils/current");
 
 
 
 
 function currentRoutes(app) {
     app
-        .get('/api/current/update', getYesterdayData, (req, res) => {
-            const current = new Current(req.yesterdayData)
+        .get('/api/current/update', getYesterdayData, getCurrentCountries, (req, res) => {
+            const currentData = req.yesterdayData;
+            currentData.countries = req.countryData
+            const current = new Current(currentData)
             Current.exists({ updated: req.yesterdayData.updated})
                 .then(isUpdated => {
                     if(!isUpdated) {
@@ -28,7 +30,21 @@ function currentRoutes(app) {
                 .sort({$natural:-1})
                 .then(currentStats => res.json(currentStats).end())
                 .catch(() => res.status(400).end())
-    })
+        })
+
+        .get('/api/current/lastupdate', (req, res) => {
+            Current
+                .find({})
+                .limit(1)
+                .sort({$natural:1})
+                .then(latest => res.json(latest[0].created).end())
+                .catch(() => res.status(400).end())
+        })
+
+        .get('/api/current/test', getCurrentCountries, (req, res) => {
+            res.json(req.countryData).end()
+
+        })
 }
 
 module.exports = currentRoutes;
