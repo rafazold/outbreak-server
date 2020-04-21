@@ -2,11 +2,12 @@ const mongoose = require('mongoose');
 const Current = mongoose.model('Current');
 const {getYesterdayData, getCurrentCountries} = require("../utils/current");
 
-
-
-
 function currentRoutes(app) {
     app
+        .get('/api/start', (req, res) => {
+            res.json({message: "server is running"})
+        })
+
         .get('/api/current/update', getYesterdayData, getCurrentCountries, (req, res) => {
             const currentData = req.yesterdayData;
             currentData.countries = req.countryData
