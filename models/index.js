@@ -8,3 +8,4 @@ mongoose
 require('./country');
 require('./story');
 require('./current');
+require('./source');

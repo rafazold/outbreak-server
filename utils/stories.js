@@ -2,6 +2,7 @@ const {newsApiKey} = require('../config');
 const NewsAPI = require('newsapi');
 const mongoose = require('mongoose');
 const Story = mongoose.model('Story');
+const Source = mongoose.model('Source');
 
 const getStorySources = async (req, res, next) => {
     const newsapi = new NewsAPI(newsApiKey);
@@ -15,7 +16,7 @@ const getStorySources = async (req, res, next) => {
         })
         .catch(err => res.status(500).json({message: "server error"}).end() )
     req.categories = await sources;
-
+// TODO: add this to stories endpoint
     next()
 }
 
@@ -57,7 +58,6 @@ const getStoriesFromWeb = async (req, res, next) => {
         sortBy: 'relevancy'
     })
         .then(stories => {
-            console.log('everything',stories);
             return stories
         })
         .catch(err => res.status(500).json({message: "server error"}).end() )
@@ -71,18 +71,31 @@ const addStoriesToDb = async (req, res, stories) => {
     const checkAndAddArticle = async (article) => {
         const addStory = Story.exists({ url: article.url })
             .then(articleExists => {
-                console.log(articleExists)
+                console.log('article exists: ', articleExists)
                 if (
                     !articleExists
                     && article.url
                     && article.urlToImage
                     && article.title
                     && article.description
+                //    TODO: validation in model
                 ) {
-                    const story = new Story(article)
-                    story.save()
-                        .then(added => req.storiesAdded.push(added))
-                        .catch((err) => res.json({message:'article not added'}))
+                    console.log('Story to add: ', article.title);
+                    Source.findOne({id: article.source.id})
+                        .then(articleSource => {
+                            console.log('articleSource', 'articleSource')
+                            const artWithDomain = article;
+                            artWithDomain.source.domain = articleSource.url;
+                            console.log('artWithDomain:', 'artWithDomain')
+                            return artWithDomain
+                        })
+                        .then(completeArticle => {
+                            const story = new Story(completeArticle)
+                            story.save()
+                                .then(added => req.storiesAdded.push(added))
+                                .catch((err) => res.json({message:'article not added'}))
+                        })
+                        .catch((err) => res.json(err))
                 }
             })
             .catch(err => console.log(err))

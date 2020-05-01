@@ -29,6 +29,7 @@
     "mongoose": "^5.9.5",
     "morgan": "^1.9.1",
     "newsapi": "^2.4.0",
+    "psl": "^1.8.0",
     "request": "^2.88.2"
   },
   "devDependencies": {

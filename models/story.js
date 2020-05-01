@@ -6,7 +6,13 @@ mongoose.model('Story', {
         name: String
     },
     author: String,
-    title: String,
+    title: {
+        type: String,
+        require: true,
+        validate(value) {
+            return value.length > 6;
+        }
+    },
     description: String,
     url: {
         type: String,
@@ -15,9 +21,22 @@ mongoose.model('Story', {
             return value.length > 6;
         }
     },
-    urlToImage: String,
+    urlToImage: {
+        type: String,
+        require: true,
+        validate(value) {
+            return value.length > 6;
+        }
+    },
     publishedAt: Date,
     content: String,
+    domain: {
+        type: String,
+        require: true,
+        validate(value) {
+            return value.length > 6;
+        }
+    },
     created: {
         type: Date,
         default: Date.now

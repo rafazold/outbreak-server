@@ -55,13 +55,15 @@ const getStoriesFromWeb = async () => {
 const checkAndAddArticle = async (article, storiesAdded) => {
     const addStory = Story.exists({ url: article.url })
         .then(articleExists => {
+            console.log('article exists: ', articleExists)
             if (
-                articleExists
+                !articleExists
                 && article.url
                 && article.urlToImage
                 && article.title
                 && article.description
             ) {
+                console.log('Story to add: ', article.title);
                 const story = new Story(article)
                 story.save()
                     .then(added => storiesAdded.push(added))
