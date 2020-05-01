@@ -11,7 +11,7 @@ const getStorySources = async (req, res, next) => {
         language: 'en'
     })
         .then(categories => {
-            console.log('cat','categories')
+            // console.log('cat','categories')
             return categories
         })
         .catch(err => res.status(500).json({message: "server error"}).end() )
@@ -71,7 +71,7 @@ const addStoriesToDb = async (req, res, stories) => {
     const checkAndAddArticle = async (article) => {
         const addStory = Story.exists({ url: article.url })
             .then(articleExists => {
-                console.log('article exists: ', articleExists)
+                // console.log('article exists: ', articleExists)
                 if (
                     !articleExists
                     && article.url
@@ -80,13 +80,11 @@ const addStoriesToDb = async (req, res, stories) => {
                     && article.description
                 //    TODO: validation in model
                 ) {
-                    console.log('Story to add: ', article.title);
+                    // console.log('Story to add: ', article.title);
                     Source.findOne({id: article.source.id})
                         .then(articleSource => {
-                            console.log('articleSource', 'articleSource')
                             const artWithDomain = article;
                             artWithDomain.source.domain = articleSource.url;
-                            console.log('artWithDomain:', 'artWithDomain')
                             return artWithDomain
                         })
                         .then(completeArticle => {

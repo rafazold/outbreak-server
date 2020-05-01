@@ -11,8 +11,8 @@ const getStoriesFromWeb = async () => {
     const stories = newsapi.v2.everything({
         q: 'COVID',
         language: 'en',
-        from: '2020-04-19',
-        // from: today,
+        // from: '2020-04-19',
+        from: today,
         sources: `
         abc-news,
         bbc-news,
@@ -52,7 +52,7 @@ const getStoriesFromWeb = async () => {
 const checkAndAddArticle = async (article, storiesAdded) => {
     const addStory = Story.exists({ url: article.url })
         .then(articleExists => {
-            console.log('article exists: ', articleExists, article.title)
+            // console.log('article exists: ', articleExists, article.title)
             if (
                 !articleExists
                 && article.url
@@ -60,7 +60,7 @@ const checkAndAddArticle = async (article, storiesAdded) => {
                 && article.title
                 && article.description
             ) {
-                console.log('Story to add: ', article.title);
+                // console.log('Story to add: ', article.title);
                 const story = new Story(article)
                 return story.save()
                     .then(added => storiesAdded.push(added))
