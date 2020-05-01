@@ -4,10 +4,7 @@ const mongoose = require('mongoose');
 require("../models");
 const Story = mongoose.model('Story');
 const moment = require('moment');
-//
 
-//
-//
 const getStoriesFromWeb = async () => {
     const newsapi = new NewsAPI(newsApiKey);
     const today = moment().format('YYYY-MM-DD');
@@ -55,7 +52,7 @@ const getStoriesFromWeb = async () => {
 const checkAndAddArticle = async (article, storiesAdded) => {
     const addStory = Story.exists({ url: article.url })
         .then(articleExists => {
-            console.log('article exists: ', articleExists)
+            console.log('article exists: ', articleExists, article.title)
             if (
                 !articleExists
                 && article.url
@@ -65,12 +62,12 @@ const checkAndAddArticle = async (article, storiesAdded) => {
             ) {
                 console.log('Story to add: ', article.title);
                 const story = new Story(article)
-                story.save()
+                return story.save()
                     .then(added => storiesAdded.push(added))
-                    .catch(err => console.log(err))
+                    .catch(err => console.log('on save', article, err))
             }
         })
-        .catch(err => console.log(err))
+        .catch(err => console.log('end - ', err))
     return await addStory
 }
 
@@ -79,12 +76,12 @@ const addStories = async (stories) => {
     for (const story of stories) {
         await checkAndAddArticle(story, storiesAdded)
     }
-    return storiesAdded
+    return storiesAdded;
 }
 
 //
 getStoriesFromWeb()
     .then(stories => addStories(stories.articles))
-    .then(added => console.log("articles added: ", added))
+    .then(added => console.log("articles added: ", added.length))
     .then(() => mongoose.disconnect())
     .catch(err => console.log(err))
