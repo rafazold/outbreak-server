@@ -30,13 +30,13 @@ const getStats = () => {
 const addStats = async  (currentStats) => {
     const addToDb = Current.exists({updated: currentStats.updated})
         .then(exists => {
-            // console.log(exists)
             if(!exists) {
                 const current = new Current(currentStats)
-                console.log(current, 'AAA',)
                 return current.save()
                     .then(saved => console.log(`DB totals updated time: ${saved.updated}`))
                     .catch(err => console.log(err))
+            } else {
+                console.log({message: 'Hooray!, stats are up to date, no action is needed'})
             }
         })
         .catch(err => console.log(err))
