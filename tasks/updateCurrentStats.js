@@ -33,7 +33,11 @@ const addStats = async  (currentStats) => {
             if(!exists) {
                 const current = new Current(currentStats)
                 return current.save()
-                    .then(saved => console.log(`DB totals updated time: ${saved.updated}`))
+                    .then(saved => console.log(`DB totals updated time: ${saved.updated.toLocaleString(
+                        'en-US', {
+                            year: '2-digit',
+                            month: 'numeric',
+                            day: 'numeric'})}`))
                     .catch(err => console.log(err))
             } else {
                 console.log({message: 'Hooray!, stats are up to date, no action is needed'})
